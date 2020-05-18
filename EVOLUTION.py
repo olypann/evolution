@@ -1,31 +1,26 @@
-from random import choice
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from evolution_classes import World
+sns.set(style='darkgrid')
 
 
-class Creature:
-    def __init__(self):
-        self.death_rate = 0
-
-
-class World:
-    def __init__(self):
-        self.birth_rate = 1
-        self.creatures = []
-
-    def spontaneous_birth(self):
-        self.creatures.append(Creature())
+def show_analytics(data):
+    df = pd.DataFrame(data)
+    df = df.set_index('day')
+    print(df)
+    sns.lineplot(data=df, marker='o')
+    plt.show()
 
 
 def main():
+    data = []
     days = 7
     world = World()
-    print('day | population')
-    print('----------------')
     for day in range(1, days+1):
-        world.spontaneous_birth()
-        print('{:^3} | {:^10} '.format(day, len(world.creatures)))
-
-
-
+        world.evolve()
+        data.append({'day': day, 'population': len(world.creatures)})
+    show_analytics(data)
 
 if __name__ == '__main__':
     main()

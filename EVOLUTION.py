@@ -50,7 +50,7 @@ def main():
         screen.fill(WHITE)
         world.creatures_group.draw(screen)
         pygame.display.flip()
-        time.sleep(0.03)
+        time.sleep(PAUSE)
     show_analytics(data)
     pygame.quit()
 

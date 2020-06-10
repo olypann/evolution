@@ -16,7 +16,7 @@ class Creature(pygame.sprite.Sprite):
         self.birthday = day
 
     def is_dead(self):
-        self.death_rate *= 1.1
+        # self.death_rate *= 1.1
         if random.random() < self.death_rate:
             return True
         return False
@@ -29,7 +29,8 @@ class Creature(pygame.sprite.Sprite):
 
 class World:
     def __init__(self):
-        self.birth_rate = 1
+        self.birth_rate_nusha = NUSHA_B
+        self.birth_rate_kopatich = KOPATICH_B
         self.creatures = []
         self.days = 0
         self.creatures_group = pygame.sprite.Group()
@@ -46,12 +47,14 @@ class World:
             self.creatures_group.add(new_creature)
 
     def spontaneous_birth(self):
-        new_creature = Nusha(day=self.days)
-        self.creatures.append(new_creature)
-        self.creatures_group.add(new_creature)
-        new_creature = Kopatich(day=self.days)
-        self.creatures.append(new_creature)
-        self.creatures_group.add(new_creature)
+        if random.random() < self.birth_rate_nusha:
+            new_creature = Nusha(day=self.days)
+            self.creatures.append(new_creature)
+            self.creatures_group.add(new_creature)
+        if random.random() < self.birth_rate_kopatich:
+            new_creature = Kopatich(day=self.days)
+            self.creatures.append(new_creature)
+            self.creatures_group.add(new_creature)
 
     def death(self):
         for creature in self.creatures:
@@ -68,9 +71,9 @@ class World:
 
     def evolve(self):
         self.days += 1
-        self.replication()
-        # self.spontaneous_birth()
+        self.spontaneous_birth()
         self.death()
+        self.replication()
 
 
 class Nusha(Creature):

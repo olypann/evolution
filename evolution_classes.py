@@ -15,11 +15,6 @@ class Creature(pygame.sprite.Sprite):
         self.death_rate = 0
         self.birthday = day
 
-    def is_dead(self):
-        # self.death_rate *= 1.1
-        if random.random() < self.death_rate:
-            return True
-        return False
 
     def replicate(self, day):
         if random.random() < self.replication_rate:
@@ -58,7 +53,7 @@ class World:
 
     def death(self):
         for creature in self.creatures:
-            if creature.is_dead():
+            if random.random() < creature.death_rate + len(self.creatures)*COMPETITION_COEF:
                 self.creatures.remove(creature)
                 creature.kill()
 
@@ -81,6 +76,7 @@ class Nusha(Creature):
         super().__init__(day)
         self.death_rate = NUSHA_D
         self.replication_rate = NUSHA_R
+        self.mutation_rate = NUSHA_M_KOPATICH
         self.image = load_image('nusha.png')
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, SCREENRECT.width-self.rect.width)
@@ -88,6 +84,8 @@ class Nusha(Creature):
 
     def replicate(self, day):
         if random.random() < self.replication_rate:
+            if random.random() < self.mutation_rate:
+                return Kopatich(day=day)
             return Nusha(day=day)
         return None
 
@@ -97,6 +95,7 @@ class Kopatich(Creature):
         super().__init__(day)
         self.death_rate = KOPATICH_D
         self.replication_rate = KOPATICH_R
+        self.mutation_rate = KOPATICH_M_SOVA
         self.image = load_image('kopatich.png')
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, SCREENRECT.width-self.rect.width)
@@ -104,7 +103,25 @@ class Kopatich(Creature):
 
     def replicate(self, day):
         if random.random() < self.replication_rate:
+            if random.random() < self.mutation_rate:
+                return Sova(day=day)
             return Kopatich(day=day)
+        return None
+
+
+class Sova(Creature):
+    def __init__(self, day):
+        super().__init__(day)
+        self.death_rate = SOVA_D
+        self.replication_rate = SOVA_R
+        self.image = load_image('sova.png')
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, SCREENRECT.width-self.rect.width)
+        self.rect.y = random.randint(0, SCREENRECT.height-self.rect.height)
+
+    def replicate(self, day):
+        if random.random() < self.replication_rate:
+            return Sova(day=day)
         return None
 
 

@@ -46,6 +46,7 @@ def main():
             'average age': mean_age,
             'nusha population': len([c for c in world.creatures if type(c).__name__ == 'Nusha']),
             'kopatich population': len([c for c in world.creatures if type(c).__name__ == 'Kopatich']),
+            'sova population': len([c for c in world.creatures if type(c).__name__ == 'Sova']),
         })
         screen.fill(WHITE)
         world.creatures_group.draw(screen)

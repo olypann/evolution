@@ -4,8 +4,8 @@ import pygame
 
 SCREENRECT = pygame.Rect(0, 0, 1500, 900)
 WHITE = (255, 255, 255)
-FPS = 30
-MAX_COUNTER = 200
+FPS = 20
+MAX_COUNTER = 100
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 RED = pygame.Color(255, 0, 0, 30)
 PURPLE = pygame.Color(255, 0, 255, 30)
@@ -30,15 +30,15 @@ class Creature(pygame.sprite.Sprite):
             nearest_danger = None
             if danger is not None:
                 for predator in danger:
-                    dist_x = self.rect.x - predator.rect.x
-                    dist_y = self.rect.y - predator.rect.y
+                    dist_x = self.rect.centerx - predator.rect.centerx
+                    dist_y = self.rect.centery - predator.rect.centery
                     dist = (dist_x**2 + dist_y**2)**0.5
                     if dist < min_dist and dist <= self.vision_radius:
                         min_dist = dist
                         nearest_danger = predator
                 if nearest_danger is not None:
-                    dist_x = nearest_danger.rect.x - self.rect.x
-                    dist_y = nearest_danger.rect.y - self.rect.y
+                    dist_x = nearest_danger.rect.centerx - self.rect.centerx
+                    dist_y = nearest_danger.rect.centery - self.rect.centery
                     dist = (dist_x**2 + dist_y**2)**0.5
                     if dist:
                         dx = dist_x * self.speed / dist
@@ -51,8 +51,8 @@ class Creature(pygame.sprite.Sprite):
                     self.move(goal)
             else:
                 for meal in goal:
-                    dist_x = self.rect.x - meal.rect.x
-                    dist_y = self.rect.y - meal.rect.y
+                    dist_x = self.rect.centerx - meal.rect.centerx
+                    dist_y = self.rect.centery - meal.rect.centery
                     dist = (dist_x**2 + dist_y**2)**0.5
                     if dist < min_dist and dist <= self.vision_radius:
                         min_dist = dist
@@ -71,8 +71,8 @@ class Creature(pygame.sprite.Sprite):
                             self.rect.y += int(dy)
                             break
             elif nearest_food is not None:
-                dist_x = nearest_food.rect.x - self.rect.x
-                dist_y = nearest_food.rect.y - self.rect.y
+                dist_x = nearest_food.rect.centerx - self.rect.centerx
+                dist_y = nearest_food.rect.centery - self.rect.centery
                 dist = (dist_x**2 + dist_y**2)**0.5
                 if dist:
                     dx = dist_x * self.speed / dist
@@ -185,6 +185,7 @@ while running:
                         if tokill:
                             for victim in tokill:
                                 victim.kill()
+                                del victim
                             animal.eat()
                         else:
                             animal.move(nusha_group)
@@ -192,23 +193,24 @@ while running:
                 for animal in herbivorous_group:
                     if animal.ate == 0:
                         animal.kill()
+                        del animal
                     elif animal.ate == 2:
                         if type(animal) == Sova:
                             sova = Sova()
                             sova_group.add(sova)
                             herbivorous_group.add(sova)
-                            print('родилась новая сова')
                         elif type(animal) == Nusha:
                             nusha = Nusha()
                             nusha_group.add(nusha)
                             herbivorous_group.add(nusha)
-                    animal.ate = 0
+                        animal.ate = 0
                 for animal in kopatich_group:
                     if animal.ate == 0:
                         animal.kill()
+                        del animal
                     elif animal.ate == 2:
                         kopatich_group.add(Kopatich())
-                    animal.ate = 0
+                        animal.ate = 0
 
                 for food in food_group:
                     food.kill()
@@ -219,15 +221,15 @@ while running:
             for animal in herbivorous_group:
                 if type(animal) == Nusha:
                     surface = pygame.Surface(SCREENRECT.size, pygame.SRCALPHA, 32)
-                    pygame.draw.circle(surface, RED, (animal.rect.x, animal.rect.y), animal.vision_radius)
+                    pygame.draw.circle(surface, RED, animal.rect.center, animal.vision_radius)
                     screen.blit(surface, (0, 0))
                 else:
                     surface = pygame.Surface(SCREENRECT.size, pygame.SRCALPHA, 32)
-                    pygame.draw.circle(surface, PURPLE, (animal.rect.x, animal.rect.y), animal.vision_radius)
+                    pygame.draw.circle(surface, PURPLE, animal.rect.center, animal.vision_radius)
                     screen.blit(surface, (0, 0))
             for kopatich in kopatich_group:
                 surface = pygame.Surface(SCREENRECT.size, pygame.SRCALPHA, 32)
-                pygame.draw.circle(surface, ORANGE, (kopatich.rect.x, kopatich.rect.y), kopatich.vision_radius)
+                pygame.draw.circle(surface, ORANGE, kopatich.rect.center, kopatich.vision_radius)
                 screen.blit(surface, (0, 0))
             kopatich_group.draw(screen)
             herbivorous_group.draw(screen)
